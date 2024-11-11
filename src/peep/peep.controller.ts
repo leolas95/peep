@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { PeepService } from './peep.service';
 import { CreatePeepDto } from './dto/create-peep.dto';
-import { UpdatePeepDto } from './dto/update-peep.dto';
 
 @Controller('peeps')
 export class PeepController {
@@ -20,23 +11,18 @@ export class PeepController {
     return this.peepService.create(createPeepDto);
   }
 
-  @Get()
-  findAll() {
-    return this.peepService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.peepService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.peepService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePeepDto: UpdatePeepDto) {
-    return this.peepService.update(+id, updatePeepDto);
+    return this.peepService.findOne(id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.peepService.remove(+id);
+    return this.peepService.remove(id);
   }
 }

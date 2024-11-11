@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
-import { UpdatePeepDto } from './dto/update-peep.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -11,19 +10,19 @@ export class PeepService {
     return this.prismaService.peep.create({ data: createPeepDto });
   }
 
-  findAll() {
-    return `This action returns all peep`;
+  // findAllUserPeeps(userId: string) {
+  //   return this.prismaService.peep.findMany({
+  //     where: { user_id: userId },
+  //   });
+  // }
+
+  findOne(id: string) {
+    return this.prismaService.peep.findUnique({
+      where: { id: id },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} peep`;
-  }
-
-  update(id: number, updatePeepDto: UpdatePeepDto) {
-    return `This action updates a #${id} peep`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} peep`;
+  remove(id: string) {
+    return this.prismaService.peep.delete({ where: { id: id } });
   }
 }
