@@ -1,9 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PeepService } from './peep.service';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { UpdatePeepDto } from './dto/update-peep.dto';
 
-@Controller('peep')
+@Controller('peeps')
 export class PeepController {
   constructor(private readonly peepService: PeepService) {}
 

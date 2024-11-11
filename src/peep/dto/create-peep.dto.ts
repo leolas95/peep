@@ -1,1 +1,4 @@
-export class CreatePeepDto {}
+export class CreatePeepDto {
+  content: string;
+  // userId: string;
+}

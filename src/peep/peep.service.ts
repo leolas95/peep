@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { UpdatePeepDto } from './dto/update-peep.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class PeepService {
+  constructor(private readonly prismaService: PrismaService) {}
+
   create(createPeepDto: CreatePeepDto) {
-    return 'This action adds a new peep';
+    return this.prismaService.peep.create({ data: createPeepDto });
   }
 
   findAll() {
