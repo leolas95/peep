@@ -10,11 +10,11 @@ export class PeepService {
     return this.prismaService.peep.create({ data: createPeepDto });
   }
 
-  // findAllUserPeeps(userId: string) {
-  //   return this.prismaService.peep.findMany({
-  //     where: { user_id: userId },
-  //   });
-  // }
+  findAllUserPeeps(userId: string) {
+    return this.prismaService.peep.findMany({
+      where: { user_id: userId },
+    });
+  }
 
   findOne(id: string) {
     return this.prismaService.peep.findUnique({

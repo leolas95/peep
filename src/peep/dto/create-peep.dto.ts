@@ -1,4 +1,4 @@
 export class CreatePeepDto {
   content: string;
-  // userId: string;
+  user_id: string;
 }

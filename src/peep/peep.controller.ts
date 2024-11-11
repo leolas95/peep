@@ -11,11 +11,6 @@ export class PeepController {
     return this.peepService.create(createPeepDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.peepService.findAll();
-  // }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.peepService.findOne(id);
