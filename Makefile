@@ -1,8 +1,8 @@
 dbmigrate:
-	npx prisma migrate dev --name=$(NAME)
+	npx prisma migrate dev --name="$(NAME)"
 
 dry-dbmigrate:
-	npx prisma migrate dev --name=$(NAME) --create-only
+	npx prisma migrate dev --create-only --name="$(NAME)"
 
 apply-migration:
 	npx prisma migrate dev

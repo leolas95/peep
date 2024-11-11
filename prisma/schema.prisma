@@ -16,6 +16,16 @@ datasource db {
 model peep {
   id         String   @id @default(uuid())
   content    String
-  // user_id ...
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String @default("no-user")
+  created_at DateTime @default(now())
+}
+
+model user {
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  username   String
+  peeps      peep[]
   created_at DateTime @default(now())
 }
