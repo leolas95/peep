@@ -17,7 +17,7 @@ model peep {
   id         String   @id @default(uuid())
   content    String
   user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String @default("no-user")
+  user_id String
   created_at DateTime @default(now())
 }
 
