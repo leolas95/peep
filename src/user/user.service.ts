@@ -3,6 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PeepService } from '../peep/peep.service';
+import { FollowUserDto } from './dto/follow-user.dto';
+import { UnFollowUserDto } from './dto/unfollow-user.dto';
 
 @Injectable()
 export class UserService {
@@ -35,6 +37,28 @@ export class UserService {
   remove(id: string) {
     return this.prismaService.user.delete({
       where: { id: id },
+    });
+  }
+
+  followUser(followUserDto: FollowUserDto) {
+    const { follower_id, followee_id } = followUserDto;
+    return this.prismaService.follows.create({
+      data: {
+        follower_id: follower_id,
+        followee_id: followee_id,
+      },
+    });
+  }
+
+  unfollow(unfollowDto: UnFollowUserDto) {
+    const { follower_id, followee_id } = unfollowDto;
+    return this.prismaService.follows.delete({
+      where: {
+        follower_id_followee_id: {
+          follower_id: follower_id,
+          followee_id: followee_id,
+        },
+      },
     });
   }
 }

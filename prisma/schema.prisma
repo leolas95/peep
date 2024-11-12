@@ -29,3 +29,10 @@ model user {
   peeps      peep[]
   created_at DateTime @default(now())
 }
+
+model follows {
+  follower_id String
+  followee_id String
+
+  @@id(fields: [follower_id, followee_id])
+}

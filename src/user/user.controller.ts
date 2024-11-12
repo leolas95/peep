@@ -10,6 +10,8 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FollowUserDto } from './dto/follow-user.dto';
+import { UnFollowUserDto } from './dto/unfollow-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -33,6 +35,16 @@ export class UserController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
+  }
+
+  @Post('followees')
+  follow(@Body() followUserDto: FollowUserDto) {
+    return this.userService.followUser(followUserDto);
+  }
+
+  @Delete('followees')
+  unfollow(@Body() unfollowUserDto: UnFollowUserDto) {
+    return this.userService.unfollow(unfollowUserDto);
   }
 
   @Delete(':id')
