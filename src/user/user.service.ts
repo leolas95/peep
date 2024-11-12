@@ -12,22 +12,29 @@ export class UserService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.prismaService.user.create({ data: createUserDto });
   }
 
-  findAllPeeps(userId: string) {
-    return this.peepService.findAllUserPeeps(userId);
+  findAllPeeps(id: string) {
+    return this.peepService.findAllUserPeeps(id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this.prismaService.user.findUnique({
+      where: { id: id },
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, updateUserDto: UpdateUserDto) {
+    return this.prismaService.user.update({
+      where: { id: id },
+      data: updateUserDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    return this.prismaService.user.delete({
+      where: { id: id },
+    });
   }
 }
