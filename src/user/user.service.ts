@@ -61,4 +61,14 @@ export class UserService {
       },
     });
   }
+
+  getTimeline(userId: string) {
+    return this.prismaService.$queryRaw`
+      select peep.*
+      from follows
+      join user on follows.followee_id = user.id
+      join peep on follows.followee_id = peep.user_id
+      where follower_id = ${userId}
+    `;
+  }
 }

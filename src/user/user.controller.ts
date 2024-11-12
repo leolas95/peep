@@ -27,6 +27,11 @@ export class UserController {
     return this.userService.findAllPeeps(userId);
   }
 
+  @Get(':userId/timeline')
+  getTimeline(@Param('userId') userId: string) {
+    return this.userService.getTimeline(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
