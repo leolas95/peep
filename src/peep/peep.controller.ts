@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { PeepService } from './peep.service';
 import { CreatePeepDto } from './dto/create-peep.dto';
 
@@ -12,8 +21,12 @@ export class PeepController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.peepService.findOne(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const peep = await this.peepService.findOne(id);
+    if (!peep) {
+      throw new NotFoundException('peep not found');
+    }
+    return peep;
   }
 
   @Delete(':id')
