@@ -36,23 +36,59 @@ describe('PeepController', () => {
   it('should create peep', async () => {
     // Arrange test data and mocked methods
     const userId = 'some-user-uuid';
-    const mockCreatePeep = {
+    const expected = {
       id: 'some-uuid',
       content: 'test content',
       user_id: userId,
       created_at: Date.now(),
     };
-    mockPeepService.create = jest.fn().mockReturnValueOnce(mockCreatePeep);
+    mockPeepService.create = jest.fn().mockReturnValueOnce(expected);
 
     const testCreatePeepDto: CreatePeepDto = {
       user_id: userId,
       content: 'test content',
     };
-    const createdPeep = await controller.create(testCreatePeepDto);
+    const actual = await controller.create(testCreatePeepDto);
 
     // Check expectations
     expect(mockPeepService.create).toHaveBeenCalled();
-    expect(createdPeep).toBeDefined();
-    expect(createdPeep.user_id).toBe(userId);
+    expect(actual).toBeDefined();
+    expect(actual).toEqual(expected);
+    expect(actual.user_id).toBe(userId);
+  });
+
+  it('should find peep by id', async () => {
+    const userId = 'some-user-uuid';
+    const expected = {
+      id: 'some-uuid',
+      content: 'test content',
+      user_id: userId,
+      created_at: Date.now().toLocaleString(),
+    };
+
+    mockPeepService.findOne = jest.fn().mockReturnValueOnce(expected);
+
+    const actual = await controller.findOne('some-uuid');
+
+    expect(mockPeepService.findOne).toHaveBeenCalled();
+    expect(actual).toBeDefined();
+    expect(actual).toEqual(expected);
+  });
+
+  it('should remove peep', async () => {
+    const userId = 'some-user-uuid';
+    const expected = {
+      id: 'some-uuid',
+      content: 'test content',
+      user_id: userId,
+      created_at: Date.now().toLocaleString(),
+    };
+    mockPeepService.remove = jest.fn().mockReturnValueOnce(expected);
+
+    const actual = await controller.remove('some-uuid');
+
+    expect(mockPeepService.remove).toHaveBeenCalled();
+    expect(actual).toBeDefined();
+    expect(actual).toEqual(expected);
   });
 });
