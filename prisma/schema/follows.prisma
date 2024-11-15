@@ -1,0 +1,6 @@
+model follows {
+  follower_id String @db.Uuid
+  followee_id String @db.Uuid
+
+  @@id(fields: [follower_id, followee_id])
+}
