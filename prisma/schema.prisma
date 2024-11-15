@@ -9,30 +9,35 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model peep {
-  id         String   @id @default(uuid())
+  @@map(name: "peeps")
+
+  id      String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   content    String
   user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String
+  user_id String @db.Uuid
   created_at DateTime @default(now())
 }
 
 model user {
-  id         String   @id @default(uuid())
+  @@map(name: "users")
+
+  id    String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name       String
   email      String
   username   String
-  peeps      peep[]
+  peeps peep[]
   created_at DateTime @default(now())
+
 }
 
 model follows {
-  follower_id String
-  followee_id String
+  follower_id String @db.Uuid
+  followee_id String @db.Uuid
 
   @@id(fields: [follower_id, followee_id])
 }
