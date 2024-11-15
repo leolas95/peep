@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PeepController } from './peep.controller';
 import { PeepService } from './peep.service';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { PrismaModule } from '../modules/prisma/prisma.module';
 import { CreatePeepDto } from './dto/create-peep.dto';
 
 describe('PeepController', () => {

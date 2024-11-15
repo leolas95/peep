@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../modules/prisma/prisma.service';
 import { PeepService } from '../peep/peep.service';
 import { FollowUserDto } from './dto/follow-user.dto';
 import { UnFollowUserDto } from './dto/unfollow-user.dto';

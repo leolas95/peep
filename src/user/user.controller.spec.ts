@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { PeepModule } from '../peep/peep.module';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { PrismaModule } from '../modules/prisma/prisma.module';
 
 describe('UserController', () => {
   let controller: UserController;
