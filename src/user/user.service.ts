@@ -28,14 +28,14 @@ export class UserService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prismaService.user.update({
+    return this.prismaService.user.updateMany({
       where: { id: id },
       data: updateUserDto,
     });
   }
 
   remove(id: string) {
-    return this.prismaService.user.delete({
+    return this.prismaService.user.deleteMany({
       where: { id: id },
     });
   }

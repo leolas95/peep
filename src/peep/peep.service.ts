@@ -23,6 +23,6 @@ export class PeepService {
   }
 
   remove(id: string) {
-    return this.prismaService.peep.delete({ where: { id: id } });
+    return this.prismaService.peep.deleteMany({ where: { id: id } });
   }
 }
