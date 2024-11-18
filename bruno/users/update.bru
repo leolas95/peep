@@ -1,0 +1,17 @@
+meta {
+  name: update
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{host}}:{{port}}/users/{{userID}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "leo2"
+  }
+}
