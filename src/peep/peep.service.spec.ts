@@ -135,7 +135,7 @@ describe('PeepService', () => {
       },
     ];
 
-    prismaService.peep.delete = jest.fn().mockImplementationOnce(function ({
+    prismaService.peep.deleteMany = jest.fn().mockImplementationOnce(function ({
       where: { id },
     }) {
       let peep;
@@ -143,16 +143,16 @@ describe('PeepService', () => {
         peep = db[i];
         if (peep.id === id) {
           db.splice(i, 1);
-          return peep;
+          return { count: 1 };
         }
       }
     });
 
-    const removedPeep = await service.remove(peepId);
+    const removedCount = await service.remove(peepId);
 
     expect(db.length).toBe(1);
-    expect(prismaService.peep.delete).toHaveBeenCalled();
-    expect(removedPeep).toBeDefined();
-    expect(removedPeep.id).toBe(peepId);
+    expect(prismaService.peep.deleteMany).toHaveBeenCalled();
+    expect(removedCount).toHaveProperty('count');
+    expect(removedCount.count).toBe(1);
   });
 });
