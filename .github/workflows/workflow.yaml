@@ -5,6 +5,8 @@ jobs:
   build:
     name: 'Build and test'
     runs-on: ubuntu-latest
+    # Run the job for each version of node.
+    # TODO: how to read the Node version from a file (package.json, .nvmrc, etc.) and use it as the minimum version?
     strategy:
       matrix:
         node-version: [ 21.x, 22.x ]
