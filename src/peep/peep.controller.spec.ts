@@ -3,6 +3,7 @@ import { PeepController } from './peep.controller';
 import { PeepService } from './peep.service';
 import { PrismaModule } from '../modules/prisma/prisma.module';
 import { CreatePeepDto } from './dto/create-peep.dto';
+import { HttpStatus } from '@nestjs/common';
 
 describe('PeepController', () => {
   let controller: PeepController;
@@ -85,10 +86,10 @@ describe('PeepController', () => {
     };
     mockPeepService.remove = jest.fn().mockReturnValueOnce(expected);
 
-    const actual = await controller.remove('some-uuid');
+    const response = await controller.remove('some-uuid');
 
     expect(mockPeepService.remove).toHaveBeenCalled();
-    expect(actual).toBeDefined();
-    expect(actual).toEqual(expected);
+    expect(response).toBeDefined();
+    expect(response).toHaveProperty('code', HttpStatus.OK);
   });
 });

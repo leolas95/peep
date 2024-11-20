@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -33,13 +35,22 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const { count } = await this.userService.update(id, updateUserDto);
+    if (count === 0) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { message: 'User updated successfully', code: HttpStatus.OK };
   }
 
   @Post('followees')
@@ -53,7 +64,12 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  async remove(@Param('id') id: string) {
+    const { count } = await this.userService.remove(id);
+    if (count === 0) {
+      throw new NotFoundException('User not found. Nothing was removed');
+    }
+
+    return { message: 'User deleted successfully', code: HttpStatus.OK };
   }
 }

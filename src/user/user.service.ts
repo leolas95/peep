@@ -28,14 +28,14 @@ export class UserService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prismaService.user.update({
+    return this.prismaService.user.updateMany({
       where: { id: id },
       data: updateUserDto,
     });
   }
 
   remove(id: string) {
-    return this.prismaService.user.delete({
+    return this.prismaService.user.deleteMany({
       where: { id: id },
     });
   }
@@ -64,11 +64,11 @@ export class UserService {
 
   getTimeline(userId: string) {
     return this.prismaService.$queryRaw`
-      select peep.*
+      select peeps.*
       from follows
-      join user on follows.followee_id = user.id
-      join peep on follows.followee_id = peep.user_id
-      where follower_id = ${userId}
+      join users on follows.followee_id = users.id
+      join peeps on follows.followee_id = peeps.user_id
+      where follower_id = ${userId}::uuid;
     `;
   }
 }

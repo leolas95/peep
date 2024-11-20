@@ -1,0 +1,18 @@
+meta {
+  name: create peep
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}:{{port}}/peeps
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "content": "bonjour, je sui à peep",
+      "user_id": "{{userID}}"
+  }
+}
