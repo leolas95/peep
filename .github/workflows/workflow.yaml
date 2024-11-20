@@ -3,6 +3,7 @@ run-name: Running branch ${{ github.ref_name }}
 on: push
 jobs:
   build:
+    name: 'Build node environment'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,12 +20,18 @@ jobs:
       - run: npm run build --if-present
 
   test:
-    needs: [build]
+    name: "Run unit tests"
+    needs: [ build ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [ 20.x, 22.x ]
 
     steps:
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - run: npm test
