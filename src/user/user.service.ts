@@ -63,6 +63,9 @@ export class UserService {
   }
 
   getTimeline(userId: string) {
+    // We only need the `join users on follows...` because we want to also show
+    // info about the Peep author. If we wouldn't, then just the `join peeps on...`
+    // is fine.
     return this.prismaService.$queryRaw`
       select peeps.*
       from follows
