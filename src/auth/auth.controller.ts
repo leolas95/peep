@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Request,
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -34,5 +36,10 @@ export class AuthController {
         .status(HttpStatus.UNAUTHORIZED)
         .send({ message: 'Invalid credentials' });
     }
+  }
+
+  @Get('me')
+  getProfile(@Request() req) {
+    return req.user;
   }
 }

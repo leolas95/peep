@@ -30,9 +30,12 @@ export class UserService {
         SALT_ROUNDS,
       );
       const userData = { ...createUserDto, password: hashedPassword };
-      return await this.prismaService.user.create({
+      const user = await this.prismaService.user.create({
         data: userData,
       });
+      const { password, created_at, ...result } = user;
+      // TODO: return also access token so user is automatically logged in
+      return result;
     } catch (err) {
       throw new UnauthorizedException(err);
     }
