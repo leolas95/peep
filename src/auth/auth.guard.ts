@@ -2,7 +2,6 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -54,4 +53,3 @@ export class AuthGuard implements CanActivate {
 // This must be defined outside auth.module. For some reason if you define it
 // there, compilation fails.
 export const IS_PUBLIC_KEY = 'isPublic';
-export const SkipAuth = () => SetMetadata(IS_PUBLIC_KEY, true);

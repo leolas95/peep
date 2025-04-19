@@ -11,11 +11,13 @@ import {
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
+import { SkipAuth } from './auth.decorators';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @SkipAuth()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
