@@ -33,6 +33,7 @@ export class UserService {
       const user = await this.prismaService.user.create({
         data: userData,
       });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, created_at, ...result } = user;
       // TODO: return also access token so user is automatically logged in
       return result;

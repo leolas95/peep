@@ -7,7 +7,7 @@ import { PeepModule } from '../peep/peep.module';
 @Module({
   imports: [PrismaModule, PeepModule],
   controllers: [UserController],
-  exports: [UserService],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}
