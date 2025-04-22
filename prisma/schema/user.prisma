@@ -1,11 +1,12 @@
 model user {
-  @@map(name: "users")
 
   id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name       String
   email      String
   username   String
   peeps      peep[]
-  password String
+  password   String
   created_at DateTime @default(now())
+
+  @@map(name: "users")
 }

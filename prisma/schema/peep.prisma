@@ -1,9 +1,11 @@
 model peep {
-  @@map(name: "peeps")
 
   id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   content    String
   user       user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id    String   @db.Uuid
   created_at DateTime @default(now())
+  likes      likes[]
+
+  @@map(name: "peeps")
 }
