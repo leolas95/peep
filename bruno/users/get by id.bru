@@ -1,11 +1,15 @@
 meta {
   name: get by id
   type: http
-  seq: 2
+  seq: 1
 }
 
 get {
   url: {{host}}:{{port}}/users/{{userID}}
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmJjMjFmYi1jYTdhLTRkMjktODZmMy00N2JlM2JkZmUyMGYiLCJ1c2VybmFtZSI6Imxlbzk1IiwiaWF0IjoxNzQ1MDAwNzM4LCJleHAiOjE3NDUwMDA3OTh9.U5vCY-iqVtOwMl5xCMyYJxV2W8fS4wMtABFuHG7pYQE
 }

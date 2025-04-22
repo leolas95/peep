@@ -10,7 +10,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FollowUserDto } from './dto/follow-user.dto';
 import { UnFollowUserDto } from './dto/unfollow-user.dto';
@@ -18,11 +17,6 @@ import { UnFollowUserDto } from './dto/unfollow-user.dto';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
 
   @Get(':userId/peeps')
   findAllPeeps(@Param('userId') userId: string) {
@@ -36,7 +30,7 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const user = await this.userService.findOne(id);
+    const user = await this.userService.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }

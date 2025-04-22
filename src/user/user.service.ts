@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../modules/prisma/prisma.service';
 import { PeepService } from '../peep/peep.service';
 import { FollowUserDto } from './dto/follow-user.dto';
 import { UnFollowUserDto } from './dto/unfollow-user.dto';
+
+// const SALT_ROUNDS = 12;
 
 @Injectable()
 export class UserService {
@@ -13,17 +14,19 @@ export class UserService {
     private readonly peepService: PeepService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.prismaService.user.create({ data: createUserDto });
-  }
-
   findAllPeeps(id: string) {
     return this.peepService.findAllUserPeeps(id);
   }
 
-  findOne(id: string) {
+  findById(id: string) {
     return this.prismaService.user.findUnique({
       where: { id: id },
+    });
+  }
+
+  findByUsername(username: string) {
+    return this.prismaService.user.findFirst({
+      where: { username: username },
     });
   }
 
