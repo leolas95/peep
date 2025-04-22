@@ -12,6 +12,7 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Response } from 'express';
 import { SkipAuth } from './auth.decorators';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,12 @@ export class AuthController {
         .status(HttpStatus.UNAUTHORIZED)
         .send({ message: 'Invalid credentials' });
     }
+  }
+
+  @SkipAuth()
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.authService.create(createUserDto);
   }
 
   @Get('me')
