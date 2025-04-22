@@ -1,1 +1,11 @@
+model user_likes {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  // To know which user liked which peep
+  user       user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String   @db.Uuid
+  peep       peep     @relation(fields: [peep_id], references: [id], onDelete: Cascade)
+  peep_id    String   @db.Uuid
+  created_at DateTime @default(now())
 
+  @@unique([user_id, peep_id])
+}
