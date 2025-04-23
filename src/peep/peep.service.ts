@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ImATeapotException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { PrismaService } from '../modules/prisma/prisma.service';
 
@@ -64,6 +68,31 @@ export class PeepService {
         peep_id: true,
         like_count: true,
         created_at: true,
+      },
+    });
+  }
+
+  async unlike(id: string, userId: string) {
+    const { count } = await this.prismaService.user_likes.deleteMany({
+      where: { user_id: userId, peep_id: id },
+    });
+
+    if (count === 0) {
+      // TODO return proper error
+      throw new ImATeapotException();
+    }
+
+    return this.prismaService.likes.update({
+      data: {
+        like_count: {
+          decrement: 1,
+        },
+      },
+      where: { peep_id: id },
+      select: {
+        like_count: true,
+        created_at: true,
+        peep_id: true,
       },
     });
   }

@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Req,
 } from '@nestjs/common';
@@ -50,5 +51,11 @@ export class PeepController {
   async like(@Param('id', ParseUUIDPipe) id: string, @Req() req: Request) {
     const user = req['user'];
     return this.peepService.like(id, user.sub);
+  }
+
+  @Patch(':id/like')
+  async unlike(@Param('id', ParseUUIDPipe) id: string, @Req() req: Request) {
+    const user = req['user'];
+    return this.peepService.unlike(id, user.sub);
   }
 }
