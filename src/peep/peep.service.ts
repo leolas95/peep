@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { PrismaService } from '../modules/prisma/prisma.service';
 
@@ -24,5 +24,47 @@ export class PeepService {
 
   remove(id: string) {
     return this.prismaService.peep.deleteMany({ where: { id: id } });
+  }
+
+  async like(id: string, userId: string) {
+    const existingUserLike = await this.prismaService.user_likes.findUnique({
+      where: { user_id_peep_id: { user_id: userId, peep_id: id } },
+      select: { id: true },
+    });
+
+    // User already liked, throw an error
+    if (existingUserLike) {
+      // TODO return proper error
+      throw new NotFoundException();
+    }
+
+    const newUserLike = await this.prismaService.user_likes.create({
+      data: {
+        peep_id: id,
+        user_id: userId,
+      },
+    });
+    if (!newUserLike) {
+      // TODO return proper error
+      throw new NotFoundException();
+    }
+
+    return this.prismaService.likes.upsert({
+      create: {
+        peep_id: id,
+        like_count: 1,
+      },
+      update: {
+        like_count: {
+          increment: 1,
+        },
+      },
+      where: { peep_id: id },
+      select: {
+        peep_id: true,
+        like_count: true,
+        created_at: true,
+      },
+    });
   }
 }
