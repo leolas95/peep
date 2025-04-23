@@ -1,8 +1,4 @@
-import {
-  ImATeapotException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ImATeapotException, Injectable } from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { PrismaService } from '../modules/prisma/prisma.service';
 
@@ -39,7 +35,7 @@ export class PeepService {
     // User already liked, throw an error
     if (existingUserLike) {
       // TODO return proper error
-      throw new NotFoundException();
+      throw new ImATeapotException();
     }
 
     const newUserLike = await this.prismaService.user_likes.create({
@@ -50,10 +46,10 @@ export class PeepService {
     });
     if (!newUserLike) {
       // TODO return proper error
-      throw new NotFoundException();
+      throw new ImATeapotException();
     }
 
-    return this.prismaService.likes.upsert({
+    const res = this.prismaService.likes.upsert({
       create: {
         peep_id: id,
         like_count: 1,
@@ -70,6 +66,7 @@ export class PeepService {
         created_at: true,
       },
     });
+    return res;
   }
 
   async unlike(id: string, userId: string) {

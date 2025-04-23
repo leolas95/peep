@@ -64,6 +64,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      // TODO: The mocked PrismaService IS NOT BEING CALLED. Importing PrismaModule prevents that.
       imports: [PrismaModule, PeepModule],
       providers: [
         UserService,
