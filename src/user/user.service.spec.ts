@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { PrismaModule } from '../modules/prisma/prisma.module';
 import { PeepModule } from '../peep/peep.module';
 import { PrismaService } from '../modules/prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -64,8 +63,7 @@ describe('UserService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      // TODO: The mocked PrismaService IS NOT BEING CALLED. Importing PrismaModule prevents that.
-      imports: [PrismaModule, PeepModule],
+      imports: [PeepModule],
       providers: [
         UserService,
         {
