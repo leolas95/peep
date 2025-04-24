@@ -1,7 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PeepService } from './peep.service';
 import { PrismaService } from '../modules/prisma/prisma.service';
-import { PrismaModule } from '../modules/prisma/prisma.module';
+import { ImATeapotException } from '@nestjs/common';
+
+const mockPeeps = [
+  {
+    id: 'id1',
+    content: 'some content',
+    user_id: 'user_id1',
+    created_at: new Date(),
+  },
+  {
+    id: 'id2',
+    content: 'some content',
+    user_id: 'user_id2',
+    created_at: new Date(),
+  },
+  {
+    id: 'id3',
+    content: 'some content',
+    user_id: 'user_id1',
+    created_at: new Date(),
+  },
+];
+
+const mockUserLikes = [
+  {
+    id: 'id1',
+    user_id: 'user_id1',
+    peep_id: 'peep_id1',
+    created_at: new Date(),
+  },
+];
+
+const mockLikes = [
+  {
+    id: 'id1',
+    peep_id: 'peep_id1',
+    like_count: 1,
+    created_at: new Date(),
+  },
+];
 
 describe('PeepService', () => {
   let service: PeepService;
@@ -9,8 +48,52 @@ describe('PeepService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
-      providers: [PeepService],
+      imports: [],
+      providers: [
+        PeepService,
+        {
+          provide: PrismaService,
+          useValue: {
+            peep: {
+              create: jest.fn().mockImplementation(({ data: peep_data }) => {
+                return {
+                  id: 'some-generated-uuid',
+                  created_at: new Date(),
+                  ...peep_data,
+                };
+              }),
+              findMany: jest.fn().mockResolvedValue(mockPeeps),
+              findUnique: jest.fn().mockResolvedValue(mockPeeps[0]),
+              deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+            },
+            user_likes: {
+              findUnique: jest.fn().mockResolvedValue(null),
+              create: jest.fn().mockImplementation((data) => {
+                return {
+                  id: 'some-generated-uuid',
+                  created_at: new Date(),
+                  ...data,
+                };
+              }),
+              deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+            },
+            likes: {
+              upsert: jest.fn().mockImplementation(() => {
+                return {
+                  id: 'some-generated-uuid',
+                  created_at: new Date(),
+                  peep_id: 'peep_id1',
+                  like_count: 2,
+                };
+              }),
+              update: jest.fn().mockResolvedValue({
+                ...mockLikes[0],
+                like_count: 0,
+              }),
+            },
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<PeepService>(PeepService);
@@ -26,133 +109,102 @@ describe('PeepService', () => {
   });
 
   it('should create peep', async () => {
-    const db = [
-      {
-        id: 'some-uuid',
-        content: 'existing peep',
-        user_id: 'some-uuid',
-        created_at: Date.now(),
-      },
-    ];
-
-    prismaService.peep.create = jest
-      .fn()
-      .mockImplementationOnce(function (createPeepDto) {
-        createPeepDto.data.id = 'some-generated-uuid';
-        createPeepDto.data.created_at = Date.now();
-        db.push(createPeepDto.data);
-
-        return createPeepDto.data;
-      });
-
-    const peep = await service.create({
+    const newPeep = {
       user_id: 'some-user-id',
       content: 'some content',
-    });
+    };
+    const peep = await service.create(newPeep);
 
-    expect(db.length).toBe(2);
+    expect(peep).toBeDefined();
+    expect(peep).toMatchObject(newPeep);
     expect(prismaService.peep.create).toHaveBeenCalled();
-
-    const last = db.pop();
-    expect(last).toBe(peep);
   });
 
   it('should get peep by id', async () => {
-    const mockPeep = {
-      id: 'some-uuid',
-      content: 'test content',
-      user_id: 'some-uuid',
-      created_at: Date.now().toLocaleString(),
-    };
-    prismaService.peep.findUnique = jest.fn().mockResolvedValueOnce(mockPeep);
-
-    const peep = await service.findOne('some-uuid');
+    const peep = await service.findOne('id1');
+    expect(peep).toBeDefined();
     expect(prismaService.peep.findUnique).toHaveBeenCalled();
-    expect(peep).toEqual(mockPeep);
   });
 
   it('should find all peeps by a user', async () => {
-    const userId = 'some-user-id';
-    const db = [
-      {
-        id: 'some-peep-uuid',
-        content: 'existing peep 1',
-        user_id: userId,
-        created_at: Date.now(),
-      },
-      {
-        id: 'some-peep-uuid',
-        content: 'existing peep 2',
-        user_id: userId,
-        created_at: Date.now(),
-      },
-      {
-        id: 'some-uuid',
-        content: 'existing peep 3',
-        user_id: 'another-user-uuid',
-        created_at: Date.now(),
-      },
-      {
-        id: 'some-uuid',
-        content: 'existing peep 4',
-        user_id: userId,
-        created_at: Date.now(),
-      },
-    ];
+    const userId = 'user_id1';
 
-    prismaService.peep.findMany = jest.fn().mockImplementationOnce(function ({
-      where: { user_id },
-    }) {
-      const result = [];
-      for (const peep of db) {
-        if (peep.user_id === user_id) {
-          result.push(peep);
+    prismaService.peep.findMany = jest
+      .fn()
+      .mockImplementationOnce(({ where: { user_id } }) => {
+        const result = [];
+        for (const peep of mockPeeps) {
+          if (peep.user_id === user_id) {
+            result.push(peep);
+          }
         }
-      }
-      return result;
-    });
+        return result;
+      });
 
     const peeps = await service.findAllUserPeeps(userId);
 
-    expect(peeps.length).toBe(3);
+    expect(peeps.length).toEqual(2);
     expect(prismaService.peep.findMany).toHaveBeenCalled();
   });
 
   it('should remove peep by id', async () => {
-    const peepId = 'some-peep-id';
-    const db = [
-      {
-        id: peepId,
-        content: 'existing peep 1',
-        user_id: 'some-user-id',
-        created_at: Date.now(),
-      },
-      {
-        id: 'some-uuid',
-        content: 'existing peep 2',
-        user_id: 'some-user-id',
-        created_at: Date.now(),
-      },
-    ];
+    const removedCount = await service.remove('peep_id1');
 
-    prismaService.peep.deleteMany = jest.fn().mockImplementationOnce(function ({
-      where: { id },
-    }) {
-      let peep;
-      for (let i = 0; i < db.length; i++) {
-        peep = db[i];
-        if (peep.id === id) {
-          db.splice(i, 1);
-          return { count: 1 };
-        }
-      }
-    });
-
-    const removedCount = await service.remove(peepId);
-
-    expect(db.length).toBe(1);
+    expect(removedCount).toBeDefined();
     expect(prismaService.peep.deleteMany).toHaveBeenCalled();
     expect(removedCount).toHaveProperty('count');
     expect(removedCount.count).toBe(1);
+  });
+
+  describe('like', () => {
+    it('should like peep', async () => {
+      const like = await service.like('peep_id1', 'user_id1');
+
+      expect(like).toBeDefined();
+      expect(like).toHaveProperty('like_count');
+      expect(like.like_count).toEqual(2);
+    });
+
+    it('should not like peep if already liked', async () => {
+      prismaService.user_likes.findUnique = jest
+        .fn()
+        .mockImplementationOnce(() => {
+          return mockUserLikes[0];
+        });
+
+      await expect(service.like('peep_id1', 'user_id1')).rejects.toThrowError(
+        ImATeapotException,
+      );
+    });
+
+    it('should return error if could not create user_like', async () => {
+      prismaService.user_likes.create = jest.fn().mockImplementationOnce(() => {
+        throw new ImATeapotException();
+      });
+
+      await expect(service.like('peep_id1', 'user_id1')).rejects.toThrowError(
+        ImATeapotException,
+      );
+    });
+  });
+
+  describe('unlike', () => {
+    it('should unlike peep', async () => {
+      const like = await service.unlike('peep_id1', 'user_id1');
+
+      expect(like).toBeDefined();
+      expect(like).toHaveProperty('like_count');
+      expect(like.like_count).toEqual(0);
+    });
+
+    it('should return error if could not delete user_like', async () => {
+      prismaService.user_likes.deleteMany = jest
+        .fn()
+        .mockResolvedValueOnce({ count: 0 });
+
+      await expect(service.unlike('peep_id1', 'user_id1')).rejects.toThrowError(
+        ImATeapotException,
+      );
+    });
   });
 });

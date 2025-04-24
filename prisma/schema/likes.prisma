@@ -1,0 +1,7 @@
+model likes {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  peep       peep     @relation(fields: [peep_id], references: [id], onDelete: Cascade)
+  peep_id String @db.Uuid @unique
+  like_count Int      @default(0)
+  created_at DateTime @default(now())
+}
