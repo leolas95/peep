@@ -58,4 +58,11 @@ export class PeepController {
     const user = req['user'];
     return this.peepService.unlike(id, user.sub);
   }
+
+  @Post(':id/repeep')
+  async repeep(@Param('id', ParseUUIDPipe) id: string, @Req() req: Request) {
+    const user = req['user'];
+
+    return this.peepService.repeep(id, user.sub);
+  }
 }

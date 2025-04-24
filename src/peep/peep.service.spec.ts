@@ -5,19 +5,19 @@ import { ImATeapotException } from '@nestjs/common';
 
 const mockPeeps = [
   {
-    id: 'id1',
+    id: 'peep_id1',
     content: 'some content',
     user_id: 'user_id1',
     created_at: new Date(),
   },
   {
-    id: 'id2',
+    id: 'peep_id2',
     content: 'some content',
     user_id: 'user_id2',
     created_at: new Date(),
   },
   {
-    id: 'id3',
+    id: 'peep_id3',
     content: 'some content',
     user_id: 'user_id1',
     created_at: new Date(),
@@ -206,5 +206,18 @@ describe('PeepService', () => {
         ImATeapotException,
       );
     });
+  });
+
+  describe('repeep', () => {
+    it('should repeep a peep', async () => {
+      const repeep = await service.repeep('peep_id1', 'user_id2');
+
+      expect(repeep).toBeDefined();
+      expect(repeep).toHaveProperty('user_id');
+      expect(repeep.user_id).toEqual('user_id2');
+      expect(prismaService.peep.findUnique).toHaveBeenCalled();
+    });
+
+    it('should return error if original peep does not exist', () => {});
   });
 });

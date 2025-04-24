@@ -1,4 +1,8 @@
-import { ImATeapotException, Injectable } from '@nestjs/common';
+import {
+  ImATeapotException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePeepDto } from './dto/create-peep.dto';
 import { PrismaService } from '../modules/prisma/prisma.service';
 
@@ -16,9 +20,18 @@ export class PeepService {
     });
   }
 
-  findOne(id: string) {
+  /**
+   * Retrieves a single record from the database matching the provided ID.
+   *
+   * @param {string} id - The unique identifier of the record to retrieve.
+   * @param {object} [select] - Optional selection criteria to specify which fields to include in the result. It's a mapping from column name to boolean.
+   * @return {Promise<object|null>} Returns a promise resolving to the record object if found, or null if no record matches the specified ID.
+   */
+  findOne(id: string, select?: object) {
     return this.prismaService.peep.findUnique({
       where: { id: id },
+      // Adds the `select: {}` object only if it's set
+      ...(select ? { select } : {}),
     });
   }
 
@@ -49,7 +62,7 @@ export class PeepService {
       throw new ImATeapotException();
     }
 
-    const res = this.prismaService.likes.upsert({
+    return this.prismaService.likes.upsert({
       create: {
         peep_id: id,
         like_count: 1,
@@ -66,7 +79,6 @@ export class PeepService {
         created_at: true,
       },
     });
-    return res;
   }
 
   async unlike(id: string, userId: string) {
@@ -92,5 +104,20 @@ export class PeepService {
         peep_id: true,
       },
     });
+  }
+
+  async repeep(id: string, userId: string) {
+    // Copy content from the original peep
+    const originalPeep = await this.findOne(id, { content: true });
+    if (!originalPeep) {
+      throw new NotFoundException('Peep not found');
+    }
+
+    const newPeep: CreatePeepDto = {
+      content: originalPeep.content,
+      user_id: userId,
+    };
+
+    return this.create(newPeep);
   }
 }
